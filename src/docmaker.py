@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from docx import Document
+from mysqlhelp import Basedb,doconfig
 
 
 class docmaker():
@@ -13,6 +14,8 @@ class docmaker():
     def makedoc(self,docid):
         
         #read table data
-        pass
+        basedb = Basedb();
+        engine = basedb.crengine()
+        session1 = basedb.createsession(engine)
 
     

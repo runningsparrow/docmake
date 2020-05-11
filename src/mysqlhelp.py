@@ -7,6 +7,7 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import sessionmaker
 
 
+
 Base = declarative_base()  # 生成orm基类
 
 
@@ -33,7 +34,7 @@ class Basedb():
     def dropdb(self,engine):
         Base.metadata.drop_all(engine)
 
-    def createsession(self):
+    def createsession(self,engine):
         # dbsession = sessionmaker(bind=engine)
         dbsession = sessionmaker(bind=engine, expire_on_commit=False)
         session = dbsession()
@@ -47,4 +48,26 @@ class Basedb():
     def datatomodel(self,data,modelname):
         pass
 
+
     
+
+class doconfig(Base):
+    __tablename__ = 'doconfig'  # 生成 doc 配置表 
+
+    
+    doc_id = Column(Integer)  #文档 id
+    doc_name = Column(String) #文档 名称  
+    doc_template = Column(String) #文档 模板路径
+    doc_outpath = Column(String)  #文档 输出路径
+    doc_label_text = Column(String) #文档 json 文件 (包含路径)
+    doc_image_dir = Column(String) #文档图片目录
+    doc_excel = Column(String) #文档 excel 文件
+    doc_rmrk = Column(String) #文档备注
+
+
+
+
+
+
+
+
