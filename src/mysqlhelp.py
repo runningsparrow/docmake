@@ -15,11 +15,12 @@ class Basedb():
     
     def __init__(self):
         #
-        MSSQL_CONNECT_STR = 'mssql+pymssql://sa:Jsfc-11111@139.196.98.186/JSFCOD'
+        # MSSQL_CONNECT_STR = 'mssql+pymssql://sa:Jsfc-11111@139.196.98.186/JSFCOD'
+        MYSQL_CONNECT_STR = 'mysql+pymysql://root:wzkj2015@39.99.168.212/test1'
 
 
         # 初始化数据库连接:
-        self.db_conn_str = MSSQL_CONNECT_STR
+        self.db_conn_str = MYSQL_CONNECT_STR
 
 
     def crengine(self):
@@ -55,14 +56,14 @@ class doconfig(Base):
     __tablename__ = 'doconfig'  # 生成 doc 配置表 
 
     
-    doc_id = Column(Integer)  #文档 id
-    doc_name = Column(String) #文档 名称  
-    doc_template = Column(String) #文档 模板路径
-    doc_outpath = Column(String)  #文档 输出路径
-    doc_label_text = Column(String) #文档 json 文件 (包含路径)
-    doc_image_dir = Column(String) #文档图片目录
-    doc_excel = Column(String) #文档 excel 文件
-    doc_rmrk = Column(String) #文档备注
+    doc_id = Column(Integer, primary_key=True)  #文档 id
+    doc_name = Column(String(200)) #文档 名称  
+    doc_template = Column(String(200)) #文档 模板路径
+    doc_outpath = Column(String(200))  #文档 输出路径
+    doc_label_text = Column(String(200)) #文档 json 文件 (包含路径)
+    doc_image_dir = Column(String(200)) #文档图片目录
+    doc_excel = Column(String(200)) #文档 excel 文件
+    doc_rmrk = Column(String(500)) #文档备注
 
 
 
