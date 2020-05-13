@@ -17,5 +17,16 @@ class docmaker():
         basedb = Basedb();
         engine = basedb.crengine()
         session1 = basedb.createsession(engine)
+        dc = session1.query(doconfig).filter(doconfig.doc_id == docid ).one()
+
+        print(dc.doc_name)
+        
+
+if __name__ == '__main__':
+    dm = docmaker()
+    dm.makedoc(1)
+
+
+
 
     
