@@ -2,6 +2,7 @@
 
 from docx import Document
 import json
+import sys
 
 from mysqlhelp import Basedb,doconfig
 from returndata import returndata1
@@ -152,12 +153,27 @@ class docmaker():
            
 
 if __name__ == '__main__':
+
+    print("start python script")
+    
+    para = '1111'
+    
+    print(sys.argv)
+    if len(sys.argv) > 1:
+
+        print("进程 " +sys.argv[1] +" 执行。") 
+        para = sys.argv[1]
+    else:
+
+        print("无参数")
+
+
     dm = docmaker()
     # dm.querydocdata("test1")
     # dm.querydocdatacount();
     # ret = dm.insertdocdata("test4","template","fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
 
-    ret = dm.repairdocdata("test4","template1133311","fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
+    ret = dm.repairdocdata("test4",para,"fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
 
     if(ret["returncd"]) == 0:
 
