@@ -24,7 +24,7 @@ class Basedb():
 
 
     def crengine(self):
-        engine = create_engine(self.db_conn_str, pool_recycle=3600,echo=True)
+        engine = create_engine(self.db_conn_str, pool_recycle=3600,echo=False)
         return engine
 
 

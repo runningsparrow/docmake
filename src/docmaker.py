@@ -126,8 +126,8 @@ class docmaker():
         #read table data   
         dc = self.session1.query(doconfig).filter(doconfig.doc_name == doc_name).all()
 
-        print("sssss")
-        print(dc)
+        # print("sssss")
+        # print(dc)
 
         rd = returndata1
 
@@ -154,18 +154,20 @@ class docmaker():
 
 if __name__ == '__main__':
 
-    print("start python script")
+    # print("start python script")
+
+    para = 'parameter 1111'
     
-    para = '1111'
-    
-    print(sys.argv)
+    # print(sys.argv)
     if len(sys.argv) > 1:
 
-        print("进程 " +sys.argv[1] +" 执行。") 
+        # print("进程 " +sys.argv[1] +" 执行。") 
         para = sys.argv[1]
     else:
 
-        print("无参数")
+        # print("无参数")
+        pass
+
 
 
     dm = docmaker()
@@ -177,11 +179,25 @@ if __name__ == '__main__':
 
     if(ret["returncd"]) == 0:
 
-        print(ret["returndt"].doc_id)
+        # print(ret["returndt"].doc_id)
+
+        # print(ret)
+        # print(ret["returndt"].doc_id)
+        # print(ret["returndt"].doc_name)
+        # print(ret["returndt"].doc_template)
+        # print(ret["returndt"].doc_outpath)
+        # print(ret["returndt"].doc_label_text)
+        # print(ret["returndt"].doc_image_dir)
+        # print(ret["returndt"].doc_excel)
+        # print(ret["returndt"].doc_rmrk)
+
+        print(ret["returndt"])
     
     else:
 
         print("未插入数据")
+
+    
 
 
 
