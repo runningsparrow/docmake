@@ -3,6 +3,8 @@
 from docx import Document
 import json
 import sys
+import os
+import xlrd
 
 from mysqlhelp import Basedb,doconfig
 from returndata import returndata1
@@ -20,7 +22,63 @@ class docmaker():
 
 
     def makedoc(self,doc_name):
-        pass
+        #read table
+        docdata = self.querydocdata(doc_name)
+
+        # print(docdata)
+
+        print(docdata["returndt"][0].doc_template)
+        print(docdata["returndt"][0].doc_outpath)
+        print(docdata["returndt"][0].doc_label_text)
+        print(docdata["returndt"][0].doc_image_dir)
+        print(docdata["returndt"][0].doc_excel)
+
+
+        #open tempalte
+        docfile =  os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/template/" + docdata["returndt"][0].doc_template
+        print(docfile)
+        document = Document(docfile)
+
+        #read json text
+
+        jsonfile = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/text/" + docdata["returndt"][0].doc_label_text
+        load_f = open(jsonfile, 'r',encoding='UTF-8') 
+        jsondata = json.load(load_f)
+
+        print(jsondata)
+
+
+        #read image dir 
+        imagedir = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/image/" + docdata["returndt"][0].doc_image_dir
+        imagedirs = []
+        imagefiles = []
+        imagefilesname = []
+        for item in os.scandir(imagedir):
+            if item.is_dir():
+                imagedirs.append(item.path)
+
+            elif item.is_file():
+                imagefiles.append(item.path)
+                imagefilesname.append(item.name)
+
+        print('\n'.join(imagefiles))
+        print('\n'.join(imagefilesname))
+
+
+
+        #read excel
+        excelfile = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/excel/" + docdata["returndt"][0].doc_excel
+        
+
+
+
+        #process doc
+        for paragraph in document.paragraphs:
+            print(paragraph.text)
+
+
+
+
         
         
 
@@ -175,27 +233,30 @@ if __name__ == '__main__':
     # dm.querydocdatacount();
     # ret = dm.insertdocdata("test4","template","fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
 
-    ret = dm.repairdocdata("test4",para,"fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
+    # ret = dm.repairdocdata("test4",para,"fasdfs","ddddd","doc_image_dir","doc_excel","doc_rmrk")
 
-    if(ret["returncd"]) == 0:
+    # if(ret["returncd"]) == 0:
 
-        # print(ret["returndt"].doc_id)
+    #     # print(ret["returndt"].doc_id)
 
-        # print(ret)
-        # print(ret["returndt"].doc_id)
-        # print(ret["returndt"].doc_name)
-        # print(ret["returndt"].doc_template)
-        # print(ret["returndt"].doc_outpath)
-        # print(ret["returndt"].doc_label_text)
-        # print(ret["returndt"].doc_image_dir)
-        # print(ret["returndt"].doc_excel)
-        # print(ret["returndt"].doc_rmrk)
+    #     # print(ret)
+    #     # print(ret["returndt"].doc_id)
+    #     # print(ret["returndt"].doc_name)
+    #     # print(ret["returndt"].doc_template)
+    #     # print(ret["returndt"].doc_outpath)
+    #     # print(ret["returndt"].doc_label_text)
+    #     # print(ret["returndt"].doc_image_dir)
+    #     # print(ret["returndt"].doc_excel)
+    #     # print(ret["returndt"].doc_rmrk)
 
-        print(ret["returndt"])
+    #     print(ret["returndt"])
     
-    else:
+    # else:
 
-        print("未插入数据")
+    #     print("未插入数据")
+
+
+    dm.makedoc("test1")
 
     
 
