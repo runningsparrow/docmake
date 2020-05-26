@@ -68,9 +68,15 @@ class docmaker():
 
         #read excel
         excelfile = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/excel/" + docdata["returndt"][0].doc_excel
-        
+        # excelfile = 'I://workspace1/python/docmake/resouce/excel/test1.xlsx'
 
+        wb = xlrd.open_workbook(excelfile)
 
+        table = wb.sheets()[0]    
+        print(table.nrows)
+        print(table.ncols)
+
+        print(table)   
 
         #process doc
         for paragraph in document.paragraphs:
