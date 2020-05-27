@@ -5,6 +5,7 @@ import json
 import sys
 import os
 import xlrd
+import re
 
 from mysqlhelp import Basedb,doconfig
 from returndata import returndata1
@@ -19,6 +20,10 @@ class docmaker():
         self.basedb = Basedb();
         self.engine = self.basedb.crengine()
         self.session1 = self.basedb.createsession(self.engine)
+
+        self.flagtext = '@@text\d'
+        self.flagimage = '@@image\d'
+        self.flagsheet = '@@sheet\d'    
 
 
     def makedoc(self,doc_name):
@@ -46,6 +51,15 @@ class docmaker():
         jsondata = json.load(load_f)
 
         print(jsondata)
+        # print(jsondata["test1"].keys())
+
+        #get key list
+        # keylist = jsondata["test1"].keys()
+
+        # for key in keylist:
+        #     print(key)
+        #     print(jsondata["test1"][key])
+
 
 
         #read image dir 
@@ -59,10 +73,10 @@ class docmaker():
 
             elif item.is_file():
                 imagefiles.append(item.path)
-                imagefilesname.append(item.name)
+                imagefilesnames.append(item.name)
 
         print('\n'.join(imagefiles))
-        print('\n'.join(imagefilesname))
+        print('\n'.join(imagefilesnames))
 
 
 
@@ -80,7 +94,81 @@ class docmaker():
 
         #process doc
         for paragraph in document.paragraphs:
-            print(paragraph.text)
+            print("===========")
+            s = paragraph.text
+
+            searchtext = re.search(self.flagtext,s)
+
+            searchimage = re.search(self.flagimage,s)
+
+            searchsheet = re.search(self.flagsheet,s)
+
+
+            if searchtext:
+
+                print("searchtext")
+
+                print(searchtext)
+
+                p = re.compile(self.flagtext)
+
+                # print(p)
+
+
+                #get key list
+                keylist = jsondata["test1"].keys()
+
+                for key in keylist:
+                    print("遍历")
+                    print(key)
+                    if key == paragraph.text:
+                        ss = p.sub(jsondata["test1"][key],s)
+                        paragraph.text = ss
+                        print(paragraph.text)
+                    else:
+                        print("not match")
+                        pass
+                
+            
+            else:
+
+                print("not found text")
+
+            if searchimage:
+
+                print("searchimage")
+
+                p = re.compile(self.flagimage)
+
+                for imagename in imagefilesname:
+                    
+                    #?
+                    if imagename == :
+                        pass
+                    
+                    
+
+            
+            else:
+    
+                print("not found image")
+
+
+            if searchsheet:
+
+                print("searchsheet")
+
+            else:
+    
+                print("not found sheet")
+
+
+        #save doc to outpath
+
+        savepath = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/output/" + docdata["returndt"][0].doc_outpath
+
+        document.save(savepath)
+
 
 
 
