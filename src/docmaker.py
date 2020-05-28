@@ -23,6 +23,7 @@ class docmaker():
 
         self.flagtext = '@@text\d'
         self.flagimage = '@@image\d'
+        self.flagimage1 = 'image\d'
         self.flagsheet = '@@sheet\d'    
 
 
@@ -66,7 +67,7 @@ class docmaker():
         imagedir = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/image/" + docdata["returndt"][0].doc_image_dir
         imagedirs = []
         imagefiles = []
-        imagefilesname = []
+        imagefilesnames = []
         for item in os.scandir(imagedir):
             if item.is_dir():
                 imagedirs.append(item.path)
@@ -140,11 +141,32 @@ class docmaker():
 
                 p = re.compile(self.flagimage)
 
-                for imagename in imagefilesname:
+                
+
+                for imagename in imagefilesnames:
                     
-                    #?
-                    if imagename == :
-                        pass
+                   
+
+                    imagenamenosuffix = imagename.split(".")
+
+                    print(imagenamenosuffix[0])
+
+                    searchimage1 = re.search(self.flagimage1,imagenamenosuffix[0])
+
+                    if searchimage1:
+                        print(imagenamenosuffix[0])
+                        print(s[2:8])
+                        if s[2:8] == imagenamenosuffix[0]:
+
+                            
+
+                            ss = p.sub('',s)
+                            paragraph.text = ss
+                            run = paragraph.add_run()
+                            run.add_picture(imagedir+'/'+imagename)
+                            
+
+                    
                     
                     
 
