@@ -24,7 +24,8 @@ class docmaker():
         self.flagtext = '@@text\d'
         self.flagimage = '@@image\d'
         self.flagimage1 = 'image\d'
-        self.flagsheet = '@@sheet\d'    
+        self.flagsheet = '@@Sheet\d'    
+        self.flagsheet1 = '@@excel\d'
 
 
     def makedoc(self,doc_name):
@@ -87,11 +88,9 @@ class docmaker():
 
         wb = xlrd.open_workbook(excelfile)
 
-        table = wb.sheets()[0]    
-        print(table.nrows)
-        print(table.ncols)
-
-        print(table)   
+        # debug
+        # for sheet in wb.sheets():
+        #     print(sheet.name)
 
         #process doc
         for paragraph in document.paragraphs:
@@ -103,8 +102,9 @@ class docmaker():
             searchimage = re.search(self.flagimage,s)
 
             searchsheet = re.search(self.flagsheet,s)
+            
 
-
+            #文本
             if searchtext:
 
                 print("searchtext")
@@ -135,6 +135,7 @@ class docmaker():
 
                 print("not found text")
 
+            #图片
             if searchimage:
 
                 print("searchimage")
@@ -164,21 +165,45 @@ class docmaker():
                             paragraph.text = ss
                             run = paragraph.add_run()
                             run.add_picture(imagedir+'/'+imagename)
-                            
-
-                    
-                    
-                    
-
-            
+         
             else:
     
                 print("not found image")
 
-
+            #电子表格
             if searchsheet:
 
                 print("searchsheet")
+
+                sheetname = s[2:8]
+
+                # print(sheetname)
+
+                for sheet in wb.sheets():
+                    # print(sheet.name)
+
+                    if sheet.name == sheetname:
+
+                        print("debug")
+                        print(sheet.name)
+                        print(sheet.nrows)
+                        print(sheet.ncols)
+
+                        
+                        document.add_table(sheet.nrows,sheet.ncols)
+
+                        for i in range(0,sheet.nrows - 1):
+                            for j in range(0,sheet.ncols - 1):
+                                print(i)
+                                print(j)
+                                print(sheet.cell_value(i,j))
+
+
+
+
+
+
+
 
             else:
     
@@ -194,6 +219,10 @@ class docmaker():
 
 
 
+    #移动表格
+    def move_table_after(self,table, paragraph):
+        tbl, p = table._tbl, paragraph._p
+        p.addnext(tbl)
 
         
         
