@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from docx import Document
+
 import json
 import sys
 import os
 import xlrd
 import re
+import sys
+#替换文件需要用到的包
+import zipfile
+import shutil
+import random
+import string
 
-from mysqlhelp import Basedb,doconfig
-from returndata import returndata1
+
+#解决无法导入不同目录模块的问题
+sys.path.append("..")
+sys.path.append(".")
+
+from src.mysqlhelp import Basedb,doconfig
+from src.returndata import returndata1
 
 
 
@@ -190,21 +202,20 @@ class docmaker():
                         print(sheet.ncols)
 
                         
-                        document.add_table(sheet.nrows,sheet.ncols)
+                        table = document.add_table(sheet.nrows,sheet.ncols)
 
-                        for i in range(0,sheet.nrows - 1):
-                            for j in range(0,sheet.ncols - 1):
+                        for i in range(0,sheet.nrows):
+                            for j in range(0,sheet.ncols):
                                 print(i)
                                 print(j)
                                 print(sheet.cell_value(i,j))
+                                table.cell(i,j).text = str(sheet.cell_value(i,j))
 
-
-
-
-
-
-
-
+                        
+                        #
+                        self.move_table_after(table,paragraph)
+                        #
+                        paragraph.text = ''
             else:
     
                 print("not found sheet")
@@ -216,6 +227,11 @@ class docmaker():
 
         document.save(savepath)
 
+        attach_dir = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/attachment/" + docdata["returndt"][0].doc_attach_dir
+        self.subattach(savepath,attach_dir)
+
+
+
 
 
 
@@ -224,12 +240,113 @@ class docmaker():
         tbl, p = table._tbl, paragraph._p
         p.addnext(tbl)
 
+
+    #替换word里的附件
+
+    def subattach(self,docfile,attach_dir):
+
+        #建立临时父目录
+        if not os.path.exists(os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/tempdir/"):
+            os.mkdir(os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/tempdir/")
+
+
+        #以压缩格式打开word文件
+        zipdoc = zipfile.ZipFile(docfile) 
+        
+        tmpdir = ""
+
+        pathsuffix = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/tempdir/"
+
+        #生行8位临时文件夹名
+
+        while True:
+            tmpdir= ''.join(random.sample(string.ascii_letters + string.digits, 8))   #生行8位临时文件夹名
+            if not os.path.exists(tmpdir):
+                break
+        tmpdir1 = pathsuffix + tmpdir
+
+        print(tmpdir1)
+
+        os.mkdir(tmpdir1)                  #创建临时目录
+        os.chdir(tmpdir1)                   #转到临时目录
+        zipdoc.extractall()                     #解压word文件到临时文件夹
+        zipdoc.close()                           #关闭word文档，否则后面重新压缩会报错
+
+
+        #read attach dir 
+        attachdir = attach_dir
+        attachdirs = []
+        attachfiles = []
+        attachfilesnames = []
+        for item in os.scandir(attachdir):
+            if item.is_dir():
+                attachdirs.append(item.path)
+
+            elif item.is_file():
+                attachfiles.append(item.path)
+                attachfilesnames.append(item.name)
+
+        print('\n'.join(attachfiles))
+        print('\n'.join(attachfilesnames))
+
+        #获取docx里的嵌入对象
+        embeddingdir = tmpdir1 + "/word/embeddings/"
+        embeddingdirs = []
+        embeddingfiles = []
+        embeddingfilesnames = []
+        for item in os.scandir(embeddingdir):
+            if item.is_dir():
+                embeddingdirs.append(item.path)
+
+            elif item.is_file():
+                embeddingfiles.append(item.path)
+                embeddingfilesnames.append(item.name)
+
+        print('\n'.join(embeddingfiles))
+        print('\n'.join(embeddingfilesnames))
+
+        #把正确文件拷贝覆盖模版文件的空附件
+        i = 0
+        
+        for embedingfilename in embeddingfilesnames:
+            j = 0
+            for attachfilesname in attachfilesnames:
+                if embedingfilename == attachfilesname:
+                    
+                    shutil.copy(attachfiles[j],embeddingfiles[i])
+
+
+                j = j + 1
+            
+            i = i + 1
+
+        #
+        azip = zipfile.ZipFile(docfile, 'w')    #以压缩格式新建word文档
+        for i in os.walk('.'):                             #使用os.walk遍历整个目录及子目录，保证原有的目录结构不变
+            for j in i[2]:
+                azip.write(os.path.join(i[0],j), compress_type=zipfile.ZIP_DEFLATED)     #将文件逐个打包到word文档中，压缩格式指定为ZIP_DEFLATED
+        azip.close()                                       #关闭文件
+
+        os.chdir('..')
+        shutil.rmtree(tmpdir1,ignore_errors=True)    #删除临时文件夹
+
+
+
+
+
+
+
+        
+
+
+
+
         
         
 
-    def insertdocdata(self,doc_name,doc_template,doc_outpath,doc_label_text,doc_image_dir,doc_excel,doc_rmrk=""):
+    def insertdocdata(self,doc_name,doc_template,doc_outpath,doc_label_text,doc_image_dir,doc_excel,doc_attach_dir,doc_rmrk=""):
         #check exists
-        queryret = dm.querydocdata(doc_name)
+        queryret = self.querydocdata(doc_name)
         if len(queryret["returndt"]) != 0:
             print("文档配置已存在")
             rd = returndata1
@@ -251,6 +368,7 @@ class docmaker():
             dc.doc_label_text = doc_label_text
             dc.doc_image_dir = doc_image_dir
             dc.doc_excel = doc_excel
+            dc.doc_attach_dir = doc_attach_dir
             dc.doc_rmrk = doc_rmrk
 
             self.session1.add(dc)
@@ -268,9 +386,9 @@ class docmaker():
 
 
 
-    def repairdocdata(self,doc_name,doc_template,doc_outpath,doc_label_text,doc_image_dir,doc_excel,doc_rmrk=""):
+    def repairdocdata(self,doc_name,doc_template,doc_outpath,doc_label_text,doc_image_dir,doc_excel,doc_attach_dir,doc_rmrk=""):
         #check exists
-        queryret = dm.querydocdata(doc_name)
+        queryret = self.querydocdata(doc_name)
 
         if len(queryret["returndt"]) == 0:
             print("文档配置已存在")
@@ -290,6 +408,7 @@ class docmaker():
             dc.doc_label_text = doc_label_text
             dc.doc_image_dir = doc_image_dir
             dc.doc_excel = doc_excel
+            dc.doc_attach_dir = doc_attach_dir
             dc.doc_rmrk = doc_rmrk
 
             self.session1.commit()

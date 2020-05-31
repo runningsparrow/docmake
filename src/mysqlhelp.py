@@ -7,7 +7,6 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import sessionmaker
 
 
-
 Base = declarative_base()  # 生成orm基类
 
 
@@ -63,6 +62,7 @@ class doconfig(Base):
     doc_label_text = Column(String(200)) #文档 json 文件 (包含路径)
     doc_image_dir = Column(String(200)) #文档图片目录
     doc_excel = Column(String(200)) #文档 excel 文件
+    doc_attach_dir = Column(String(200)) #附件目录
     doc_rmrk = Column(String(500)) #文档备注
 
 
