@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from docmaker import docmaker
+#解决无法导入不同目录模块的问题
+sys.path.append("..")
+sys.path.append(".")
+
+print(sys.path)
+
+from src.docmaker import docmaker
+
 
 
 def doquerylist():
