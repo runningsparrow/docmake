@@ -332,16 +332,6 @@ class docmaker():
 
 
 
-
-
-
-
-        
-
-
-
-
-        
         
 
     def insertdocdata(self,doc_name,doc_template,doc_outpath,doc_label_text,doc_image_dir,doc_excel,doc_attach_dir,doc_rmrk=""):
