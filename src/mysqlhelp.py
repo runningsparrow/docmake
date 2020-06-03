@@ -15,7 +15,8 @@ class Basedb():
     def __init__(self):
         #
         # MSSQL_CONNECT_STR = 'mssql+pymssql://sa:Jsfc-11111@139.196.98.186/JSFCOD'
-        MYSQL_CONNECT_STR = 'mysql+pymysql://root:wzkj2015@39.99.168.212/test1'
+        # MYSQL_CONNECT_STR = 'mysql+pymysql://root:wzkj2015@39.99.168.212/test1?charset=utf8'
+        MYSQL_CONNECT_STR = 'mysql+mysqlconnector://root:wzkj2015@39.99.168.212/test1?charset=utf8'
 
 
         # 初始化数据库连接:
@@ -23,7 +24,7 @@ class Basedb():
 
 
     def crengine(self):
-        engine = create_engine(self.db_conn_str, pool_recycle=3600,echo=False)
+        engine = create_engine(self.db_conn_str, pool_recycle=3600,encoding='utf-8',echo=False)
         return engine
 
 
@@ -53,6 +54,10 @@ class Basedb():
 
 class doconfig(Base):
     __tablename__ = 'doconfig'  # 生成 doc 配置表 
+
+    __table_args__ = {
+        "mysql_charset" : "utf8"
+    }
 
     
     doc_id = Column(Integer, primary_key=True)  #文档 id

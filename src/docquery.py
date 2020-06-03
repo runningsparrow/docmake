@@ -7,7 +7,7 @@ sys.path.append(".")
 
 print(sys.path)
 
-from src.docmaker import docmaker
+from docmaker import docmaker
 
 
 

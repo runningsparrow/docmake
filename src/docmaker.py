@@ -19,8 +19,8 @@ import string
 sys.path.append("..")
 sys.path.append(".")
 
-from src.mysqlhelp import Basedb,doconfig
-from src.returndata import returndata1
+from mysqlhelp import Basedb,doconfig
+from returndata import returndata1
 
 
 
@@ -460,6 +460,8 @@ class docmaker():
         rd["returncd"] = 0
         rd["returndt"] = dc.all()
 
+        print(dc.all())
+
         return rd
         
            
@@ -511,6 +513,8 @@ if __name__ == '__main__':
 
 
     dm.makedoc("test1")
+
+    # dm.querydocdatacount();
 
     
 
