@@ -1,6 +1,8 @@
 {"test1": 
         {
-            "@@text1":"转段text1",
-            "@@text2":"转段text2"
+            "@@text1":"转段text1f1fasf",
+            "@@text2":"转段text2",
+            "@@text3":"转段text1fasfds",
+            "@@text4":"转段text1fasfds"
         }
 }
