@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+#attention:
+#run command below first:
+#pip install -r requirements.txt
+
 from docx import Document
 
 import json
