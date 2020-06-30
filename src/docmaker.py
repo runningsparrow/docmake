@@ -229,7 +229,10 @@ class docmaker():
 
         savepath = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/output/" + docdata["returndt"][0].doc_outpath
 
+        print("before save")
+        print(savepath)
         document.save(savepath)
+        print("after save")
 
         attach_dir = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/attachment/" + docdata["returndt"][0].doc_attach_dir
         self.subattach(savepath,attach_dir)
@@ -474,7 +477,7 @@ if __name__ == '__main__':
 
     # print("start python script")
 
-    para = 'parameter 1111'
+    para = "test1"
     
     # print(sys.argv)
     if len(sys.argv) > 1:
@@ -516,7 +519,7 @@ if __name__ == '__main__':
     #     print("未插入数据")
 
 
-    dm.makedoc("test1")
+    dm.makedoc(para)
 
     # dm.querydocdatacount();
 
