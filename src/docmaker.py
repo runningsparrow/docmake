@@ -65,10 +65,17 @@ class docmaker():
         #read json text
 
         jsonfile = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/text/" + docdata["returndt"][0].doc_label_text
-        load_f = open(jsonfile, 'r',encoding='UTF-8') 
-        jsondata = json.load(load_f)
 
-        print(jsondata)
+        jsondataflag = 1
+
+        if os.path.isfile(jsonfile):
+            load_f = open(jsonfile, 'r',encoding='UTF-8') 
+            jsondata = json.load(load_f)
+
+            print(jsondata)
+            jsondataflag = 0
+        else:
+            print(jsonfile + " not exits")
         # print(jsondata["test1"].keys())
 
         #get key list
@@ -101,8 +108,17 @@ class docmaker():
         #read excel
         excelfile = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/resouce/excel/" + docdata["returndt"][0].doc_excel
         # excelfile = 'I://workspace1/python/docmake/resouce/excel/test1.xlsx'
+        excelflag = 1
+        if os.path.isfile(excelfile):
 
-        wb = xlrd.open_workbook(excelfile)
+            wb = xlrd.open_workbook(excelfile)
+
+            print("open excel "+ excelfile +" successfully")
+            excelflag  = 0
+        else:
+            print(excelfile +" not exists")
+            
+
 
         # debug
         # for sheet in wb.sheets():
@@ -121,7 +137,7 @@ class docmaker():
             
 
             #文本
-            if searchtext:
+            if searchtext and jsondataflag == 0 :
 
                 print("searchtext")
 
@@ -187,7 +203,7 @@ class docmaker():
                 print("not found image")
 
             #电子表格
-            if searchsheet:
+            if searchsheet and excelflag == 0:
 
                 print("searchsheet")
 
