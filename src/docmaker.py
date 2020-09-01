@@ -149,14 +149,31 @@ class docmaker():
 
 
                 #get key list
-                keylist = jsondata["test1"].keys()
+                # keylist = jsondata["test1"].keys()
+                keylist = jsondata["textdata"].keys()
 
                 for key in keylist:
                     print("遍历")
                     print(key)
-                    if key == paragraph.text:
-                        ss = p.sub(jsondata["test1"][key],s)
+                    
+                    #match text
+
+                    searchjson = re.search(key, paragraph.text)
+
+                    print("+++++++search start++++++++++++")
+                    print(searchjson)
+                    if searchjson:
+                        print("got!")
+                        print(key)
+                        print(paragraph.text)
+                    print("+++++++search end++++++++++++")
+
+                    # if key == paragraph.text:
+                    if searchjson:
+                        # ss = p.sub(jsondata["test1"][key],s)
+                        ss = p.sub(jsondata["textdata"][key],s)
                         paragraph.text = ss
+                        print("matched!")
                         print(paragraph.text)
                     else:
                         print("not match")
