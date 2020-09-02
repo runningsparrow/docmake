@@ -5,6 +5,10 @@
 #pip install -r requirements.txt
 
 from docx import Document
+from docx.shared import Pt  #用来设置字体的大小
+from docx.shared import Inches
+from docx.oxml.ns import qn  #设置字体
+from docx.shared import RGBColor  #设置字体的颜色
 
 import json
 import sys
@@ -168,13 +172,38 @@ class docmaker():
                         print(paragraph.text)
                     print("+++++++search end++++++++++++")
 
+                    print(jsondata["textdata"][key])
+                    print(type(jsondata["textdata"][key]))
+
                     # if key == paragraph.text:
                     if searchjson:
-                        # ss = p.sub(jsondata["test1"][key],s)
-                        ss = p.sub(jsondata["textdata"][key],s)
-                        paragraph.text = ss
-                        print("matched!")
-                        print(paragraph.text)
+
+                        if isinstance(jsondata["textdata"][key],dict):
+                            
+                            print("this is a dict!")
+
+                            #处理内容
+                            ss = p.sub(jsondata["textdata"][key]["content"],s)
+                            paragraph.text = ''
+                            run = paragraph.add_run(ss)
+
+                            #处理颜色
+                            run.font.color.rgb = RGBColor(250,0,0)
+
+
+
+
+                        else:
+                            
+                            print("this is not a dict!")
+
+                            # ss = p.sub(jsondata["test1"][key],s)
+                        
+                            ss = p.sub(jsondata["textdata"][key],s)
+                            paragraph.text = ss
+                            
+                            print("matched!")
+                            print(paragraph.text)
                     else:
                         print("not match")
                         pass
@@ -510,7 +539,8 @@ if __name__ == '__main__':
 
     # print("start python script")
 
-    para = "test1"
+    # para = "test1"
+    para = "test5"
     
     # print(sys.argv)
     if len(sys.argv) > 1:
