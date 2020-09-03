@@ -9,6 +9,11 @@ from docx.shared import Pt  #用来设置字体的大小
 from docx.shared import Inches
 from docx.oxml.ns import qn  #设置字体
 from docx.shared import RGBColor  #设置字体的颜色
+from docx.enum.style import WD_STYLE_TYPE
+
+from docx.table import _Cell
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 
 import json
 import sys
@@ -50,6 +55,44 @@ class docmaker():
         self.colorconfig = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/src/" "color.json"
         self.colorjsondata = {}
 
+
+    def set_cell_border(self,cell: _Cell, **kwargs):
+        """
+        Set cell`s border
+        Usage:
+        set_cell_border(
+            cell,
+            top={"sz": 12, "val": "single", "color": "#FF0000", "space": "0"},
+            bottom={"sz": 12, "color": "#00FF00", "val": "single"},
+            start={"sz": 24, "val": "dashed", "shadow": "true"},
+            end={"sz": 12, "val": "dashed"},
+        )
+        """
+        tc = cell._tc
+        tcPr = tc.get_or_add_tcPr()
+    
+        # check for tag existnace, if none found, then create one
+        tcBorders = tcPr.first_child_found_in("w:tcBorders")
+        if tcBorders is None:
+            tcBorders = OxmlElement('w:tcBorders')
+            tcPr.append(tcBorders)
+    
+        # list over all available tags
+        for edge in ('start', 'top', 'end', 'bottom', 'insideH', 'insideV'):
+            edge_data = kwargs.get(edge)
+            if edge_data:
+                tag = 'w:{}'.format(edge)
+    
+                # check for tag existnace, if none found, then create one
+                element = tcBorders.find(qn(tag))
+                if element is None:
+                    element = OxmlElement(tag)
+                    tcBorders.append(element)
+    
+                # looks like order of attributes is important
+                for key in ["sz", "val", "color", "space", "shadow"]:
+                    if key in edge_data:
+                        element.set(qn('w:{}'.format(key)), str(edge_data[key]))
 
     def makedoc(self,doc_name):
         #read table
@@ -261,6 +304,7 @@ class docmaker():
                             run = paragraph.add_run()
                             
                             #add picture and set image size
+                            # run.add_picture(imagedir+'/'+imagename)
                             run.add_picture(imagedir+'/'+imagename, width=Inches(4))
          
             else:
@@ -287,7 +331,29 @@ class docmaker():
                         print(sheet.ncols)
 
                         
+                        # styles = document.styles
+
+                        # print(styles)
+
+                        # ss = ''
+                        # for s in styles:
+                        #         if s.type == WD_STYLE_TYPE.TABLE:
+                        #             print(s.type)
+                        #             print("++++++++")
+                        #             print(s)
+                        #             ss = s
+                        #             print("++++++++")
+
+                        # print("=========")
+                        # print(ss)
+                        
+                        # print("=========")
+                        # table = document.add_table(sheet.nrows,sheet.ncols,style=ss)
+
                         table = document.add_table(sheet.nrows,sheet.ncols)
+                        
+
+                        
 
                         for i in range(0,sheet.nrows):
                             for j in range(0,sheet.ncols):
@@ -295,6 +361,17 @@ class docmaker():
                                 print(j)
                                 print(sheet.cell_value(i,j))
                                 table.cell(i,j).text = str(sheet.cell_value(i,j))
+
+                                ##############
+                                #set up cell border
+                                self.set_cell_border(
+                                    table.cell(i,j),
+                                    top={"sz": 12, "val": "single", "color": "#000000", "space": "0"},
+                                    bottom={"sz": 12, "color": "#000000", "val": "single"},
+                                    start={"sz": 24, "val": "dashed", "shadow": "true"},
+                                    end={"sz": 12, "val": "dashed"},
+                                )
+                                ##############
 
                         
                         #
@@ -558,8 +635,8 @@ if __name__ == '__main__':
 
     # print("start python script")
 
-    # para = "test1"
-    para = "test5"
+    para = "test1"
+    # para = "test5"
     
     # print(sys.argv)
     if len(sys.argv) > 1:
