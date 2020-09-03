@@ -47,6 +47,9 @@ class docmaker():
         self.flagsheet = '@@Sheet\d'    
         self.flagsheet1 = '@@excel\d'
 
+        self.colorconfig = os.path.abspath(os.path.dirname(os.path.abspath("__file__"))) + "/src/" "color.json"
+        self.colorjsondata = {}
+
 
     def makedoc(self,doc_name):
         #read table
@@ -59,6 +62,21 @@ class docmaker():
         print(docdata["returndt"][0].doc_label_text)
         print(docdata["returndt"][0].doc_image_dir)
         print(docdata["returndt"][0].doc_excel)
+
+
+        #load color.json under same directory
+
+        
+        if os.path.isfile(self.colorconfig):
+            load_f = open(self.colorconfig, 'r',encoding='UTF-8') 
+            self.colorjsondata = json.load(load_f)
+
+            print(self.colorjsondata)
+
+        else:
+            print(self.colorconfig  + " not exits")
+
+
 
 
         #open tempalte
@@ -188,13 +206,12 @@ class docmaker():
                             run = paragraph.add_run(ss)
 
                             #处理颜色
-                            run.font.color.rgb = RGBColor(250,0,0)
+                            colorkey = self.colorjsondata["color"].keys() 
 
-
-
-
-                        else:
-                            
+                            for ckey in colorkey:
+                                if ckey == jsondata["textdata"][key]["color"]:
+                                    run.font.color.rgb = RGBColor(self.colorjsondata["color"][ckey]['r'],self.colorjsondata["color"][ckey]['g'],self.colorjsondata["color"][ckey]['b'])
+                        else:                
                             print("this is not a dict!")
 
                             # ss = p.sub(jsondata["test1"][key],s)
@@ -242,7 +259,9 @@ class docmaker():
                             ss = p.sub('',s)
                             paragraph.text = ss
                             run = paragraph.add_run()
-                            run.add_picture(imagedir+'/'+imagename)
+                            
+                            #add picture and set image size
+                            run.add_picture(imagedir+'/'+imagename, width=Inches(4))
          
             else:
     
